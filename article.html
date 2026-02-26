@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradoGate | Intelligence Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-white font-sans antialiased text-slate-900">
+    <nav class="border-b border-gray-100 p-6 flex justify-between items-center max-w-5xl mx-auto">
+        <a href="index.html" class="text-2xl font-black text-blue-700 uppercase italic tracking-tighter">TradoGate</a>
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Atum Intelligence Report</span>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-6 py-20">
+        <div id="article-cat" class="text-blue-600 text-xs font-black uppercase tracking-[0.2em] mb-6"></div>
+        <h1 id="article-title" class="font-serif text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-10"></h1>
+        <div id="article-body" class="text-slate-600 text-xl leading-relaxed space-y-6"></div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+
+        // Note: For this to work perfectly, we would add an /api/news/:id route in server.js
+        // For now, let's just show you have the architecture ready!
+        document.getElementById('article-title').innerText = "Terminal Data Locked.";
+        document.getElementById('article-body').innerText = "Upgrade to TRADOGATE PRO to unlock full institutional analysis.";
+    </script>
+</body>
+</html>

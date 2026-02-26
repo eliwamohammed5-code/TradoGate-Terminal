@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | TradoGate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .glass-input { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.1); }
+        .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <nav class="border-b border-slate-800 bg-slate-950/50 backdrop-blur-md sticky top-0 z-50 p-4">
+        <div class="max-w-[1200px] mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-black italic tracking-tighter text-blue-500">TRADOGATE</a>
+            <a href="index.html" class="text-[10px] font-black uppercase text-gray-400 hover:text-white transition">← Back to Terminal</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-[800px] w-full mx-auto px-4 py-20">
+        <h1 class="text-4xl font-black mb-2 uppercase tracking-tighter">Institutional Support</h1>
+        <p class="text-gray-400 text-sm mb-12">Connect with the Atum Intelligence team for enterprise API access, PRO terminal issues, or press inquiries.</p>
+
+        <form id="contact-form" class="space-y-6 bg-slate-900/50 p-8 border border-slate-800 rounded-sm shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-gray-500 mb-2">Full Name</label>
+                    <input type="text" id="c-name" required class="glass-input w-full p-4 text-white rounded-sm text-sm" placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-gray-500 mb-2">Institution / Fund</label>
+                    <input type="text" id="c-inst" required class="glass-input w-full p-4 text-white rounded-sm text-sm" placeholder="Capital Management LLC">
+                </div>
+            </div>
+            <div>
+                <label class="block text-[10px] font-black uppercase text-gray-500 mb-2">Inquiry Type</label>
+                <select id="c-type" class="glass-input w-full p-4 text-white rounded-sm text-sm appearance-none">
+                    <option class="bg-slate-900">API Documentation Access</option>
+                    <option class="bg-slate-900">TradoGate PRO Enterprise</option>
+                    <option class="bg-slate-900">Eliwa Market Desk Partnership</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] font-black uppercase text-gray-500 mb-2">Secure Message</label>
+                <textarea id="c-msg" rows="5" required class="glass-input w-full p-4 text-white rounded-sm text-sm" placeholder="Detail your request..."></textarea>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 uppercase tracking-[0.2em] transition shadow-lg text-xs rounded-sm">
+                Transmit to Atum Servers
+            </button>
+            <p id="c-status" class="text-center text-xs font-bold uppercase mt-4 hidden"></p>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusBox = document.getElementById('c-status');
+            const data = {
+                name: document.getElementById('c-name').value,
+                institution: document.getElementById('c-inst').value,
+                inquiry_type: document.getElementById('c-type').value,
+                message: document.getElementById('c-msg').value
+            };
+
+            try {
+                const res = await fetch('http://localhost:3000/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    statusBox.innerText = "✅ TRANSMISSION SECURED & ENCRYPTED.";
+                    statusBox.className = "text-center text-xs font-black uppercase mt-4 text-green-500 block";
+                    document.getElementById('contact-form').reset();
+                } else { throw new Error('Failed'); }
+            } catch (err) {
+                statusBox.innerText = "❌ SERVER OFFLINE. TRY AGAIN.";
+                statusBox.className = "text-center text-xs font-black uppercase mt-4 text-red-500 block";
+            }
+        });
+    </script>
+</body>
+</html>

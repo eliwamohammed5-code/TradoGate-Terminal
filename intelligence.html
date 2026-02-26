@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Desk | TradoGate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .data-row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s; }
+        .data-row:hover { background: rgba(37, 99, 235, 0.1); cursor: pointer; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="border-b border-slate-800 bg-slate-950 sticky top-0 z-50 p-4">
+        <div class="max-w-[1800px] mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-12">
+                <a href="index.html" class="text-2xl font-black italic tracking-tighter text-blue-500">TRADOGATE</a>
+                <div class="hidden md:flex gap-8 text-[11px] font-black text-gray-400 uppercase tracking-widest">
+                    <a href="markets.html" class="hover:text-white transition">Markets</a>
+                    <a href="analysis.html" class="hover:text-white transition">Analysis</a>
+                    <a href="intelligence.html" class="text-blue-500 border-b-2 border-blue-500 pb-1">Intelligence</a>
+                </div>
+            </div>
+            <a href="index.html" class="text-[10px] font-black uppercase tracking-widest bg-slate-900 border border-slate-700 px-4 py-2 hover:bg-slate-800 transition rounded-sm">← Back to Main</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-[1800px] w-full mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-9 space-y-6">
+            <div class="flex justify-between items-end border-b border-slate-800 pb-4">
+                <div>
+                    <h1 class="text-3xl font-black uppercase tracking-tighter text-white mb-1" id="desk-title">INTELLIGENCE DESK</h1>
+                    <p class="text-xs text-gray-500 font-mono tracking-widest uppercase">Deep Alpha Node Briefings</p>
+                </div>
+                <div class="text-[10px] font-black uppercase text-blue-500 bg-blue-900/20 px-3 py-1 border border-blue-900/50 rounded-sm animate-pulse">
+                    ● SECURE STREAM ACTIVE
+                </div>
+            </div>
+
+            <div class="bg-black border border-slate-800 rounded-sm overflow-hidden shadow-2xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900 text-[9px] uppercase tracking-widest text-gray-500 border-b border-slate-800">
+                            <th class="p-4 font-black w-24">Time (GMT)</th>
+                            <th class="p-4 font-black w-24">Source</th>
+                            <th class="p-4 font-black">Encrypted Transmission</th>
+                            <th class="p-4 font-black w-32 text-right">Sentiment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-grid" class="text-xs font-mono">
+                        <tr><td colspan="4" class="p-8 text-center text-gray-600">Syncing with Leviathan Database...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <aside class="lg:col-span-3 space-y-8">
+            <div class="bg-slate-900 p-6 border-t-4 border-blue-600 shadow-2xl">
+                <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-6">Desk Overview</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-gray-400">Total Intercepts</span>
+                        <span id="stat-count" class="text-sm font-black text-blue-400 font-mono">--</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-gray-400">Primary Sentiment</span>
+                        <span id="stat-sent" class="text-sm font-black text-white font-mono">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="h-[400px] w-full bg-black border border-slate-800 rounded-sm overflow-hidden">
+                <div class="tradingview-widget-container h-full">
+                    <div class="tradingview-widget-container__widget h-full"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js" async>
+                    {
+                    "width": "100%", "height": "100%", "currencies": [ "EUR", "USD", "JPY", "GBP", "CHF", "AUD" ],
+                    "isTransparent": true, "colorTheme": "dark", "locale": "en"
+                    }
+                    </script>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        // TARGET LOCKED TO INTELLIGENCE
+        const TARGET_CATEGORY = "INTELLIGENCE"; 
+
+        async function fetchDeskData() {
+            try {
+                const res = await fetch('http://localhost:3000/api/news');
+                const data = await res.json();
+                
+                const filteredData = data.filter(item => item.category === TARGET_CATEGORY);
+                
+                document.getElementById('stat-count').innerText = filteredData.length;
+                
+                const bulls = filteredData.filter(i => i.sentiment === 'BULLISH').length;
+                document.getElementById('stat-sent').innerText = bulls > (filteredData.length / 2) ? 'BULLISH' : 'BEARISH';
+                document.getElementById('stat-sent').className = bulls > (filteredData.length / 2) ? 'text-sm font-black font-mono text-green-500' : 'text-sm font-black font-mono text-red-500';
+
+                const grid = document.getElementById('data-grid');
+                if(filteredData.length === 0) {
+                    grid.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-red-500">NO DATA FOUND FOR THIS DESK.</td></tr>';
+                    return;
+                }
+
+                grid.innerHTML = filteredData.map(item => {
+                    const time = new Date(item.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second:'2-digit' });
+                    const sentColor = item.sentiment === 'BULLISH' ? 'text-green-500' : 'text-red-500';
+                    return `
+                        <tr class="data-row" onclick="alert('PRO ACCOUNT REQUIRED TO VIEW DEEP INTELLIGENCE REPORT')">
+                            <td class="p-4 text-gray-500">${time}</td>
+                            <td class="p-4"><span class="bg-slate-800 text-[9px] px-2 py-1 rounded-sm">${item.source}</span></td>
+                            <td class="p-4 text-gray-200 font-bold tracking-tight">${item.title}</td>
+                            <td class="p-4 text-right font-black ${sentColor}">${item.sentiment} <br><span class="text-[9px] text-gray-600">${item.confidence}%</span></td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch(e) { console.log("Database connection error"); }
+        }
+
+        window.onload = fetchDeskData;
+        setInterval(fetchDeskData, 15000);
+    </script>
+</body>
+</html>
